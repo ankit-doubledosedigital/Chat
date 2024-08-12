@@ -1,0 +1,82 @@
+/* Global Styles */
+body {
+  background-color: #f5f5f5;
+}
+
+/* Section and Container Consistency */
+.hero-section, .content-width {
+  max-width: 1200px;
+}
+
+.hero-section {
+  height: 100vh;
+  background-color: #ece9e5; /* First section color */
+  color: #ffffff;
+}
+
+.feature-section {
+  background-color: #ffffff; /* Second section color */
+}
+
+.download-section {
+  background-color: #ece9e5; /* Repeat first section color */
+  color: #ffffff;
+}
+.price-section {
+  background-color: #ece9e5; /* Repeat first section color */
+  /* color: #ffffff; */
+}
+
+/* Card Styles */
+.feature-card {
+  height: 100%;
+}
+
+.h1 {
+  color: #ff5800;
+}
+
+.card-title {
+  color: #ff5800;
+}
+
+.card-text {
+  color: #777 !important;
+}
+
+/* Button Styles */
+.btn-primary {
+  background-color: #ff5800;
+  border-color: hsl(21, 100%, 50%);
+}
+
+.btn-outline-primary {
+  color: #ff5800;
+  border-color: #ff5800;
+}
+
+/* Icon Styles */
+.os-icon {
+  height: 60px;
+  max-width: 100%;
+}
+
+/* Remove underline from links */
+a {
+  text-decoration: none !important;
+}
+
+/* Banner Image Rotation Animation */
+@keyframes rotate-banner {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.banner-image {
+  animation: rotate-banner 10s linear infinite;
+  background-color: transparent; /* Removes the background */
+}
