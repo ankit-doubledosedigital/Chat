@@ -5,7 +5,6 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const connectDB = require('./db/dbConnection');
-const authRoutes = require('./Routes/user');
 
 // Rest of your code
 
@@ -17,10 +16,7 @@ app.use(express.json());
 // Enable Cors 
 app.use(cors())
 
-app.use('/auth',require('./Routes/user'));
-// app.use('verify-otp',require('./Routes/user'));
 
-// app.use('/auth', authRoutes);
 
 
 
