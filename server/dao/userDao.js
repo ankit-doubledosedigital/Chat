@@ -1,29 +1,39 @@
-const User = require('../models/user');
+// dao/userDao.js
+const User = require('../models/userModel');
+const bcrypt = require('bcrypt');
 
-const findUserByPhoneNumber = async (phoneNumber) => {
-    return await User.findOne({ phoneNumber });
+module.exports.createUser = async (userData) => {
+  try {
+    const user = new User(userData);
+    await user.save();
+    return user;
+  } catch (error) {
+    console.log(error)
+    throw new Error('Error creating user');
+  }
+   
 };
 
-const createUser = async (phoneNumber, otp, otpExpiry) => {
-    const user = new User({ phoneNumber, otp, otpExpiry });
-    return await user.save();
-};
 
-const updateUserOtp = async (user, otp, otpExpiry) => {
-    user.otp = otp;
-    user.otpExpiry = otpExpiry;
-    return await user.save();
-};
+module.exports.findUser = async (userData) => {
+  try {
+    const { email, password } = userData;
+    
+    const user = await User.findOne({ email });
 
-const clearUserOtp = async (user) => {
-    user.otp = null;
-    user.otpExpiry = null;
-    return await user.save();
-};
+    if (!user) {
+      throw new Error('User not found');
+    }
 
-module.exports = {
-    findUserByPhoneNumber,
-    createUser,
-    updateUserOtp,
-    clearUserOtp,
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      throw new Error('Invalid credentials');
+    }
+
+    return user;
+  } catch (error) {
+    console.error(error);
+    throw new Error('Error finding user');
+  }
 };

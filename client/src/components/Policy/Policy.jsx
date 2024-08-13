@@ -21,7 +21,7 @@ const PrivacyPolicy = () => {
         <ul className="list-unstyled mb-4">
           <li><strong>Account:</strong> A unique account created for You to access our Service or parts of our Service.</li>
           <li><strong>Affiliate:</strong> An entity that controls, is controlled by or is under common control with a party...</li>
-          <li><strong>Company:</strong> Refers to Agami Technologies Pvt. Ltd., F4, Signature Tower...</li>
+          <li><strong>Company:</strong> Refers to Double Dose Digital Pvt. Ltd., A 6 Media Village...</li>
           <li><strong>Cookies:</strong> Small files placed on Your computer...</li>
           <li><strong>Country:</strong> Refers to: Uttar Pradesh, India</li>
           <li><strong>Device:</strong> Any device that can access the Service...</li>
@@ -29,7 +29,7 @@ const PrivacyPolicy = () => {
           <li><strong>Service:</strong> Refers to the Website.</li>
           <li><strong>Service Provider:</strong> Any natural or legal person who processes the data on behalf of the Company.</li>
           <li><strong>Usage Data:</strong> Data collected automatically...</li>
-          <li><strong>Website:</strong> Refers to BeGenieUs...</li>
+          <li><strong>Website:</strong> Refers to TalkNexus...</li>
           <li><strong>You:</strong> The individual accessing or using the Service...</li>
         </ul>
 
@@ -105,10 +105,10 @@ const PrivacyPolicy = () => {
           If you have any questions about this Privacy Policy, You can contact us:
         </p>
         <address>
-          F4, Signature Tower, Ansal IT City Park (SEZ) Tech Zone,<br />
+         A 6 Media Village<br />
           Greater Noida UP-201308 (India)<br />
-          0120-6909687, 0120-6909686<br />
-          By email: <a href="mailto:info@begenieus.com">info@begenieus.com</a>
+          012, 01<br />
+          By email: <a href="mailto:info@talknexus.com">info@talknexus.com</a>
         </address>
       </div>
     </section>

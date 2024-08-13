@@ -3,25 +3,34 @@ body {
   background-color: #f5f5f5;
 }
 
-/* Section and Container Consistency */
-.hero-section, .content-width {
+/* Consistent Section Width */
+.content-width {
   max-width: 1200px;
+  margin: 0 auto; /* Center the section horizontally */
+  padding: 0 15px; /* Optional: Add some padding for better responsiveness */
 }
 
 .hero-section {
-  height: 100vh;
+  height: 60vh;
   background-color: #ece9e5; /* First section color */
   color: #ffffff;
+  display: flex; /* Align items in the center */
+  align-items: center;
 }
 
 .feature-section {
+  height: 50vh;
+  padding-top: 20rem;
   background-color: #ffffff; /* Second section color */
 }
 
 .download-section {
+  height: 50vh;
+
   background-color: #ece9e5; /* Repeat first section color */
   color: #ffffff;
 }
+
 .price-section {
   background-color: #ece9e5; /* Repeat first section color */
   /* color: #ffffff; */
@@ -80,3 +89,6 @@ a {
   animation: rotate-banner 10s linear infinite;
   background-color: transparent; /* Removes the background */
 }
+
+/* Add this to your Homepage.css */
+

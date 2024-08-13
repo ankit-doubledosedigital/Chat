@@ -5,6 +5,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const connectDB = require('./db/dbConnection');
+const userRoutes = require('./Routes/UserRoutes');
 
 // Rest of your code
 
@@ -18,8 +19,7 @@ app.use(cors())
 
 
 
-
-
+app.use('/api', userRoutes);
 
 
 

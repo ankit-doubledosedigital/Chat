@@ -39,7 +39,7 @@ const Registration = () => {
     setErrors(validationErrors);
     if (Object.keys(validationErrors).length === 0) {
       try {
-        const response = await axios.post('http://localhost:8080/register', registerData);
+        const response = await axios.post('http://localhost:5000/api/register', registerData); // Update endpoint if necessary
         console.log(response.data);
         toast.success('Registration Successful!');
         setRegisterData({
@@ -49,7 +49,7 @@ const Registration = () => {
           confirmPassword: ''
         });
       } catch (error) {
-        console.log(error);
+        console.error('Registration failed:', error.response?.data || error.message);
         toast.error('Registration Failed');
       }
     }
@@ -65,8 +65,9 @@ const Registration = () => {
           <form onSubmit={handleRegisterSubmit} className="register-form">
             <h1>Registration Form</h1>
             <div>
-              <label>Username:</label>
+              <label htmlFor="username">Username:</label>
               <input
+                id="username"
                 type="text"
                 name="username"
                 value={registerData.username}
@@ -75,8 +76,9 @@ const Registration = () => {
               {errors.username && <span className="form-error">{errors.username}</span>}
             </div>
             <div>
-              <label>Email:</label>
+              <label htmlFor="email">Email:</label>
               <input
+                id="email"
                 type="email"
                 name="email"
                 value={registerData.email}
@@ -85,8 +87,9 @@ const Registration = () => {
               {errors.email && <span className="form-error">{errors.email}</span>}
             </div>
             <div>
-              <label>Password:</label>
+              <label htmlFor="password">Password:</label>
               <input
+                id="password"
                 type="password"
                 name="password"
                 value={registerData.password}
@@ -95,8 +98,9 @@ const Registration = () => {
               {errors.password && <span className="form-error">{errors.password}</span>}
             </div>
             <div>
-              <label>Confirm Password:</label>
+              <label htmlFor="confirmPassword">Confirm Password:</label>
               <input
+                id="confirmPassword"
                 type="password"
                 name="confirmPassword"
                 value={registerData.confirmPassword}

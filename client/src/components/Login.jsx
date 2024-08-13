@@ -2,40 +2,37 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './Style/Login.css';
 import { Link, useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
 import loginImage from '../Assets/login.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFacebookF, faLinkedinIn, faTwitter } from '@fortawesome/free-brands-svg-icons';
 // Import toastify css file
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+
 const Login = () => {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-  });
+  
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const navigate = useNavigate();
-
-
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:8080/login', formData);
+      console.log("🚀 ~ handleLoginSubmit ~ password:", password)
+      console.log("🚀 ~ handleLoginSubmit ~ email:", email)
+      const response = await axios.post('http://localhost:5000/api/login',{
+        data:{
+          email:email,
+          password:password
+        }
+      });
       if (response.data) {
         toast.success('Login successful');
         localStorage.setItem('name', response.data.user.username);
         localStorage.setItem('email', response.data.user.email);
         localStorage.setItem('userId', response.data.user._id);
-        navigate('/home'); // Navigate to the desired page on successful login
+        navigate('/chat'); // Navigate to the desired page on successful login
       } else {
         toast.error(response.data.message);
       }
@@ -60,8 +57,8 @@ const Login = () => {
               type="email"
               name="email"
               placeholder="Email address"
-              value={formData.email}
-              onChange={handleChange}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
               className="form-input"
               autoComplete="email"
@@ -72,8 +69,8 @@ const Login = () => {
               type="password"
               name="password"
               placeholder="Password"
-              value={formData.password}
-              onChange={handleChange}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               required
               className="form-input"
               autoComplete="current-password"
