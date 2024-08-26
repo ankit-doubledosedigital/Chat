@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import logo from '../Assets/TalkNexus.png';
+import logo from '../components/Assets/TalkNexus.png';
 
 const Navbar = () => {
   return (

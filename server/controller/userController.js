@@ -1,5 +1,6 @@
 // controllers/userController.js
 const userDao = require('../dao/userDao');
+// Register 
 
 module.exports.registerUser = async (req, res) => {
     const { username, email, password, confirmPassword } = req.body;
@@ -16,6 +17,7 @@ module.exports.registerUser = async (req, res) => {
         res.status(500).json({ error: 'Error registering user' });
     }
 };
+// login
 
 module.exports.login = async (req, res) => {
     const {email, password} = req.body.data;
@@ -28,3 +30,5 @@ module.exports.login = async (req, res) => {
         res.status(500).json({ error: 'Error registering user' });
     }
 };
+
+// forget Password

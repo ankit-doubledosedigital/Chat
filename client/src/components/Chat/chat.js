@@ -1,11 +1,14 @@
-import React from 'react'
+import React from 'react';
+import Dashboard from '../Dashboard';
+import { ChatBoxTemplate } from "./chat-template.js";
 
-const chat = () => {
+const Chat = () => {
   return (
     <div>
-      hello
+      <Dashboard />
+      <ChatBoxTemplate />
     </div>
-  )
+  );
 }
 
-export default chat
+export default Chat;

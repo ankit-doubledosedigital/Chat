@@ -1,0 +1,56 @@
+.dashboard {
+    background-color: #f4f4f4;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 600px;
+    margin: auto;
+    margin-top: 8rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.dashboard h2 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.dashboard img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-bottom: 20px;
+}
+
+.dashboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.dashboard-table th, .dashboard-table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+.dashboard-table th {
+    background-color: #f8f8f8;
+    color: #555;
+}
+
+.dashboard-table td {
+    background-color: #fff;
+}
+
+.dashboard button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.dashboard button:hover {
+    background-color: #0056b3;
+}

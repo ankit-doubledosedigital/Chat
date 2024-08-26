@@ -2,29 +2,37 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './Style/Login.css';
 import { Link, useNavigate } from 'react-router-dom';
-import loginImage from '../Assets/login.png';
+import loginImage from '../components/Assets/login.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFacebookF, faLinkedinIn, faTwitter } from '@fortawesome/free-brands-svg-icons';
 // Import toastify css file
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+// Google Login
+import { GoogleLogin } from '@react-oauth/google';
+import { jwtDecode } from "jwt-decode";
 
+
+// let Client_Id = '793075133255-tk4vjvbupijb0cto3nmqgm8khkm7g8ib.apps.googleusercontent.com';
+// let Client_Secret = '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';
+// let Api_Key = '793075133255-tk4vjvbupijb0cto3nmqgm8khkm7g8ib.apps.googleusercontent.com';
 
 const Login = () => {
-  
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+
   const navigate = useNavigate();
 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     try {
-      console.log("🚀 ~ handleLoginSubmit ~ password:", password)
-      console.log("🚀 ~ handleLoginSubmit ~ email:", email)
-      const response = await axios.post('http://localhost:5000/api/login',{
-        data:{
-          email:email,
-          password:password
+      const response = await axios.post('http://localhost:5000/api/login', {
+        data: {
+          email: email,
+          password: password,
+
         }
       });
       if (response.data) {
@@ -41,6 +49,16 @@ const Login = () => {
       toast.error('Login failed');
     }
   };
+
+  const signInWithGoogle = async () =>{
+    let user =jwtDecode(credentialResponse.credential)
+    localStorage.setItem('token',credentialResponse.credential)
+    const response = await axios.post('http://localhost:5000/api/signInGoogle', {
+      data: {
+          user : user
+      }
+    });
+  }
 
   return (
     <div className="login-container">
@@ -77,9 +95,22 @@ const Login = () => {
             />
           </div>
           <div className="form-actions">
-            <button type="submit" className="login-button">Login</button>7
+            <button type="submit" className="login-button">Login</button>
             <Link to="/register" className="signup-button">Sign up</Link>
-            
+            <Link to="/reset-password">Forgot your password?</Link>
+
+            <div id="signInButton">
+              <GoogleLogin
+                onSuccess={credentialResponse => {
+                  signInWithGoogle(credentialResponse); 
+                }}
+                onError={() => {
+                  console.log('Login Failed');
+                }}
+              />;
+            </div>
+
+
           </div>
           <div className="social-media">
             <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" className="social-media-icon">

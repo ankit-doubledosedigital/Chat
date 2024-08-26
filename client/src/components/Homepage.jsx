@@ -1,10 +1,10 @@
 import React from 'react';
-import bannerImage from '../Assets/banner.png';
-import androidIcon from '../Assets/android-icon.png';
-import iosIcon from '../Assets/ios-icon.png';
-import macIcon from '../Assets/ios-icon.png'; // Corrected path
-import windowsIcon from '../Assets/windows-icon.png';
-import linuxIcon from '../Assets/linux-icon.png';
+import bannerImage from '../components/Assets/banner.png';
+import androidIcon from '../components/Assets/android-icon.png';
+import iosIcon from '../components/Assets/ios-icon.png';
+import macIcon from '../components/Assets/ios-icon.png'; // Corrected path
+import windowsIcon from '../components/Assets/windows-icon.png';
+import linuxIcon from '../components/Assets/linux-icon.png';
 import './Style/Homepage.css';
 import { Row, Col, Card, Button } from 'react-bootstrap';
 

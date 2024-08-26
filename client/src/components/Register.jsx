@@ -3,7 +3,7 @@ import './Style/Register.css';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import registerImage from '../Assets/register.png';
+import registerImage from '../components/Assets/register.png';
 import 'react-toastify/dist/ReactToastify.css';
 
 const Registration = () => {

@@ -23,6 +23,12 @@ const userSchema = new Schema({
     required: true,
     minlength: 6
   },
+  photoUrl: {
+    type: String,
+  },
+  uid: {
+    type: String,
+  },
   
   createdAt: {
     type: Date,
