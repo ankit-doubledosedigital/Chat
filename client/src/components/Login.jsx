@@ -12,10 +12,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from "jwt-decode";
 
-
-// let Client_Id = '793075133255-tk4vjvbupijb0cto3nmqgm8khkm7g8ib.apps.googleusercontent.com';
-// let Api_Key = '793075133255-tk4vjvbupijb0cto3nmqgm8khkm7g8ib.apps.googleusercontent.com';
-
 const Login = () => {
 
   const [email, setEmail] = useState('');
