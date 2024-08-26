@@ -49,7 +49,7 @@ const Login = () => {
     }
   };
 
-  const signInWithGoogle = async () =>{
+  const signInWithGoogle = async (credentialResponse) =>{
     let user =jwtDecode(credentialResponse.credential)
     localStorage.setItem('token',credentialResponse.credential)
     const response = await axios.post('http://localhost:5000/api/signInGoogle', {
@@ -57,6 +57,7 @@ const Login = () => {
           user : user
       }
     });
+    console.log("🚀 ~ signInWithGoogle ~ response:", response)
   }
 
   return (
