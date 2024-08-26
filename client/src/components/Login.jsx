@@ -14,7 +14,6 @@ import { jwtDecode } from "jwt-decode";
 
 
 // let Client_Id = '793075133255-tk4vjvbupijb0cto3nmqgm8khkm7g8ib.apps.googleusercontent.com';
-// let Client_Secret = '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';
 // let Api_Key = '793075133255-tk4vjvbupijb0cto3nmqgm8khkm7g8ib.apps.googleusercontent.com';
 
 const Login = () => {
