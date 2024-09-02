@@ -6,6 +6,7 @@
 
         const connectDB = require('./db/dbConnection');
         const userRoutes = require('./Routes/UserRoutes');
+    
 
 
         // console.log(login)
@@ -19,6 +20,9 @@
 
 
         app.use('/api', userRoutes);
+        app.use('/chat', require('./Routes/chat') );
+
+    
 
       
 

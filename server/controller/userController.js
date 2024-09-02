@@ -10,7 +10,7 @@ module.exports.registerUser = async (req, res) => {
     }
 
     try {
-        const user = await userDao.createUser({username, email, password} );
+        const user = await userDao.createUser({ username, email, password });
 
         res.status(201).json({ message: 'User registered successfully', user });
     } catch (error) {
@@ -20,10 +20,9 @@ module.exports.registerUser = async (req, res) => {
 // login
 
 module.exports.login = async (req, res) => {
-    const {email, password} = req.body.data;
+    const { email, password } = req.body.data;
     try {
-        const user = await userDao.findUser({email, password} );
-        console.log("🚀 ~ module.exports.login= ~ user:", user)
+        const user = await userDao.findUser({ email, password });
 
         res.status(201).json({ message: 'User registered successfully', user });
     } catch (error) {
@@ -31,4 +30,24 @@ module.exports.login = async (req, res) => {
     }
 };
 
-// forget Password
+// google login
+
+module.exports.googleLogin = async (req, res) => {
+    const { user } = req.body.data;
+
+    try {
+        const data = await userDao.findUserGoogle({ user });
+
+        if (!data) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        res.status(200).json({ message: 'User logged in successfully', data });
+    } catch (error) {
+        console.error("Error in googleLogin:", error);
+        res.status(500).json({ error: 'Error logging in user' });
+    }
+};
+
+
+

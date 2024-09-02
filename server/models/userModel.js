@@ -1,12 +1,11 @@
 // models/userModel.js
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+// const Schema = mongoose.Schema;
 const bcrypt = require('bcrypt');
 
-const userSchema = new Schema({
+const collectionSchema = new mongoose.Schema({
   username: {
     type: String,
-    required: true,
     unique: true,
     trim: true,
     maxlength: 50
@@ -20,7 +19,6 @@ const userSchema = new Schema({
   },
   password: {
     type: String,
-    required: true,
     minlength: 6
   },
   photoUrl: {
@@ -37,7 +35,7 @@ const userSchema = new Schema({
 });
 
 // Pre-save hook to hash the password before saving the user
-userSchema.pre('save', async function(next) {
+collectionSchema.pre('save', async function(next) {
   if (this.isModified('password')) {
     try {
       const salt = await bcrypt.genSalt(10);
@@ -50,10 +48,9 @@ userSchema.pre('save', async function(next) {
 });
 
 // Method to compare passwords
-userSchema.methods.comparePassword = function(candidatePassword) {
+collectionSchema.methods.comparePassword = function(candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
 };
+module.exports = { collectionSchema, collectionName: "User" }
 
-const User = mongoose.model('User', userSchema);
 
-module.exports = User;

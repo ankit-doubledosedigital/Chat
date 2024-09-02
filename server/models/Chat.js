@@ -29,11 +29,6 @@ let collectionSchema = new mongoose.Schema(
                 date:{type:Date},
             }
         ],
-        blockedUsers: [
-            {
-                uid:{ type:String }
-            }
-        ],
         invitationCode: { type: String },
         isMute: [{ type: String }],
     }], { timestamps: true }

@@ -23,7 +23,7 @@ const Login = () => {
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/api/login', {
+        const response = await axios.post('http://localhost:5000/api/login', {
         data: {
           email: email,
           password: password,
@@ -46,6 +46,7 @@ const Login = () => {
   };
 
   const signInWithGoogle = async (credentialResponse) =>{
+    try{
     let user =jwtDecode(credentialResponse.credential)
     localStorage.setItem('token',credentialResponse.credential)
     const response = await axios.post('http://localhost:5000/api/signInGoogle', {
@@ -53,7 +54,21 @@ const Login = () => {
           user : user
       }
     });
-    console.log("🚀 ~ signInWithGoogle ~ response:", response)
+    if (response.data) {
+      toast.success('Login successful');
+      localStorage.setItem('name', response.data.data.username);
+      localStorage.setItem('email', response.data.data.email);
+      localStorage.setItem('userId', response.data.data._id);
+
+      navigate('/chat'); // Navigate to the desired page on successful login
+    } else {
+      toast.error(response.data.message);
+    }
+  }     catch (error) {
+    console.error(error);
+    toast.error('Login failed');
+
+  }
   }
 
   return (
