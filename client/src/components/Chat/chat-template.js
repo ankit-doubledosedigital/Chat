@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Button, Form } from 'react-bootstrap';
+import { Modal, Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 // import Cropper from 'react-cropper';
 // import 'cropperjs/dist/cropper.css';
@@ -8,6 +8,12 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../Style/chat.css';
 import axios from 'axios';
+import io from 'socket.io-client';
+import inviteService from '../service/InviteService';
+const API_URL = 'http://localhost:5000';
+
+
+// const socket = io('http://localhost:5000');
 
 
 
@@ -17,10 +23,9 @@ import axios from 'axios';
 
 export const ChatBoxTemplate = ({
   seenMessageUsers = [],
+  chatRoomName,
   // groups = [],
-  contactList = [],
-  setDeleteContact,
-  deleteContact,
+
   // createPersonalChat,
   inviteContact,
   // searchString = '',
@@ -37,52 +42,31 @@ export const ChatBoxTemplate = ({
   isMenuOpen = true,
   isViewGroup,
   currentGroup,
-  groupsNotificationCount,
-  handleInputSearch,
-  // fetchGroups,
-  toggleDropdown,
-  openDropdownId,
-  pinGroup,
-  groupInvite,
-  setBlockUserDetails,
-  blockUser,
-  setClearChatDetails,
-  muteGroupNotification,
-  setDeleteOrLeaveChatDetails,
-  selectGroupMode,
-  setSelectGroupMode,
-  setSelectGroup,
-  selectGroup,
-  router,
-  chatType,
-  filterChat,
-  resetSearch,
-  toggleBookmark,
-  showBookMark,
+
   nameEditState,
   updateGroup,
-  set,
   socket,
 
 }) => {
   const [newGroupName, setNewGroupName] = useState('');
   const [changeGroupName, setChangeGroupName] = useState('');
-
+  const [invitationCode, setinvitationCode] = useState([]);
   const [newGroupProfileSrc, setNewGroupProfileSrc] = useState(null);
   let [searchString, setSearchString] = useState('');
   const [cropImgSrc, setCropImgSrc] = useState(null);
   const [inProgress, setInProgress] = useState(false);
   const [email, setEmail] = useState('');
   const [fieldError, setFieldError] = useState('');
-  const [localSearchString, setLocalSearchString] = useState(searchString);
-  const [changeChat, setChangeChat] = useState(null);
-  const [newMessageCounter, setNewMessageCounter] = useState(0);
+  const [message, setMessage] = useState('');
   const [groupId, setGroupId] = useState(null);
-  const [blockedUsers, setBlockedUsers] = useState([]);
+  const [tempGroup, setTempGroup] = useState();
   // modal
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+
+  const photoUrl = localStorage.getItem('pictures');
+
 
   let [groups, setGroups] = useState([])
 
@@ -145,7 +129,7 @@ export const ChatBoxTemplate = ({
       formData.append('name', newGroupName.trim());
       formData.append('invitees', JSON.stringify(seenMessageUsers));
 
-      const response = await axios.post('http://localhost:5000/chat/createGroup', formData, {
+      const response = await axios.post(`${API_URL}/chat/createGroup`, formData, {
         params: {
           uid: localStorage.userId,
           imgName: `${fileName}.png`,
@@ -173,7 +157,7 @@ export const ChatBoxTemplate = ({
 
   const fetchGroups = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/chat/fetchGroups', {
+      const response = await axios.get(`${API_URL}/chat/fetchGroups`, {
         params: {
           uid: localStorage.getItem('userId') // Retrieve userId from localStorage
         }
@@ -186,9 +170,11 @@ export const ChatBoxTemplate = ({
 
   const deleteGroup = async () => {
     try {
-      const response = await axios.delete(`http://localhost:5000/chat/deletegroup/`, {
+      console.log('temp', tempGroup)
+      const response = await axios.delete(`${API_URL}/chat/deletegroup/`, {
         params: {
           uid: localStorage.getItem('userId'),
+          _id: tempGroup._id
         },
       });
 
@@ -207,38 +193,96 @@ export const ChatBoxTemplate = ({
     }
   };
 
-  const updateGroupName = async () => {
-    if (!nameEditState.value.name) {
-      // toast.message(toastMessage.GROUP_NAME, toastType.WARNING)
-    }
-    else {
-      const response = await axios.put('http://localhost:5000/chat/updateGroup', {
-        data: {
-          _id: groupId.value,
-          name: nameEditState.value.name,
-          uid
-        }
-      })
-      if (response.status == 200) {
-        nameEditState.value.state = false
-        currentGroup.value.name = nameEditState.value.name
+  const setUpdate = (group) => {
+    setTempGroup(group)
 
-        const index = groups.value.findIndex(obj => obj._id === currentGroup.value._id);
-
-        // If object found, update its name
-        if (index !== -1) {
-          groups.value[index].name = nameEditState.value.name;
-        }
-        socket.emit("notification", [{ ownerId: currentGroup.value.uid, uid: uid, groupId: groupId.value, invitees: currentGroup.value.invitees, isDelete: false }])
-
-      }
-    }
   }
 
+  const updateGroupName = async () => {
+    try {
+      if (!changeGroupName) {
+        // Show a warning toast if the name is not provided
+        toast.warning(changeGroupName);
+        return;
+      }
+
+      const response = await axios.put(`${API_URL}/chat/updateGroup`, {
+        _id: tempGroup._id,
+        name: changeGroupName,
+
+      });
+      console.log("🚀 ~ updateGroupName ~ response:", response)
+
+      if (response.status === 200) {
+        // Update the state after a successful update
+        // nameEditState.state = false;
+        // currentGroup.value.name = nameEditState.name;
+
+        const index = groups.findIndex(obj => obj._id === tempGroup._id);
+
+        // If the group is found, update its name in the list
+        if (index !== -1) {
+          groups[index].name = changeGroupName;
+        }
+
+        // Emit a socket event for the notification
+        // socket.emit("notification", {
+        //   ownerId: currentGroup.value.uid,
+        //   uid: uid,
+        //   groupId: groupId.value,
+        //   // invitees: currentGroup.value.invitees,
+        //   isDelete: false
+        // });
+      }
+    } catch (error) {
+      console.error('Error updating group name:', error);
+      // Optionally, you can show an error toast message here
+      toast.error('Failed to update group name');
+    }
+  };
 
 
 
+  const setDeleteGroup = (group) => {
+    setTempGroup(group)
+    handleShow();
 
+  };
+
+  // Invite chat to Email
+
+  const handleInviteChange = (e) => {
+    setEmail(e.target.value);
+  };
+
+  const handleInviteSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!email) {
+      setFieldError('Email is required.');
+      return;
+    }
+
+    setFieldError('');
+
+    try {
+      const invitationCode = generateInvitationCode(); // Generate or retrieve the invitation code as needed
+      const response = await inviteService.sendInvite(invitationCode, email);
+      console.log("🚀 ~ handleInviteSubmit ~ response:", response);
+
+      setMessage('Invite sent successfully!');
+      toast.success('Invite sent successfully!')
+      setEmail(''); // Clear the input after successful invite
+    } catch (error) {
+      setMessage('Failed to send invite. Please try again.');
+      toast.error('Failed to send invite. Please try again.')
+    }
+  };
+
+  // Optional: Generate an invitation code if needed
+  const generateInvitationCode = () => {
+    return Math.random().toString(36).substr(2, 8); // Adjust length as necessary
+  };
 
   const getClearStampDate = (group) => {
     // Implement this function according to your logic
@@ -252,149 +296,151 @@ export const ChatBoxTemplate = ({
   }, []);
   return (
     <>
-      <div className="container-xxl h-100 position-relative z-index-1">
+    <div className="container-xxl h-100 w-75 bg-warning p-5">
+      <div className="container-xxl h-100 position-relative">
         {!groups.length ? (
-          <div className="display-center">
-            <div className="video-outer-section">
-              <div className="white-card video-section">
-                <div className="text-center">
-                  <img
-                    src="../../../assets/images/chat-circle-image.png"
-                    width="250"
-                    alt="Chat Circle"
-                  />
-                  <h3>Create Your First Chat</h3>
-                  <p>
-                    Welcome to the Chat Circle! We’re excited to have you join our vibrant
-                    community. The Chat Circle is a space where you can connect, share, and
-                    engage with others who share your interests.
-                  </p>
-                </div>
+          <div className="d-flex flex-column align-items-center justify-content-center h-100">
+            <div className="white-card p-4 mb-4">
+              <div className="text-center">
+                <img
+                  src="../../../assets/images/chat-circle-image.png"
+                  width="200"
+                  alt="Chat Circle"
+                  className="mb-3"
+                />
+                <h3>Create Your First Chat</h3>
+                <p>
+                  Welcome to the Chat Circle! We’re excited to have you join our
+                  vibrant community where you can connect, share, and engage with
+                  others.
+                </p>
                 <button
                   type="button"
-                  className="btn btn-primary mx-auto w-100"
+                  className="btn btn-primary w-100"
                   data-bs-toggle="modal"
                   data-bs-target="#personalChatModel"
                 >
                   New Chat
                 </button>
               </div>
-
-              <div className="white-card video-section">
-                <div className="text-center">
-                  <img
-                    src="../../../assets/images/group-chat.svg"
-                    width="250"
-                    alt="Group Chat"
-                  />
-                  <h3>Create Your First Group</h3>
-                  <p>
-                    Welcome to the Chat Circle! We’re excited to have you join our vibrant
-                    community. The Chat Circle is a space where you can connect, share, and
-                    engage with others who share your interests.
-                  </p>
-                </div>
+            </div>
+  
+            <div className="white-card p-4">
+              <div className="text-center">
+                <img
+                  src="../../../assets/images/group-chat.svg"
+                  width="200"
+                  alt="Group Chat"
+                  className="mb-3"
+                />
+                <h3>Create Your First Group</h3>
+                <p>
+                  Create a group and connect with people sharing your interests.
+                </p>
                 <button
                   onClick={openNewGroupModal}
                   type="button"
-                  className="btn btn-primary mx-auto w-100"
+                  className="btn btn-primary w-100"
                   data-bs-toggle="modal"
                   data-bs-target="#new-group-modal"
                 >
                   New Group Chat
                 </button>
-
               </div>
-
-
             </div>
-
           </div>
-
         ) : (
           <div>
-            <header>All Chats</header>
-            {groups.map((group, g) => (
-              <div key={g}>
-                <p>{group.name}</p> {/* Assuming each group has a 'name' property */}
-
-                <Button variant="primary" onClick={handleShow}>
-                  Delete
-                </Button>
-
-                <Modal show={show} onHide={handleClose}>
-                  <Modal.Header closeButton>
-                    <Modal.Title>Delete Confirmation</Modal.Title>
-                  </Modal.Header>
-                  <Modal.Body>Do you really want to delete this group ?</Modal.Body>
-                  <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>
-                      No
-                    </Button>
-                    <Button variant="primary" onClick={deleteGroup} >
-                      Yes
-                    </Button>
-                  </Modal.Footer>
-                </Modal>
-                {/* Update  */}
-                <button
-                  onClick={updateGroup}
-                  type="button"
-                  className="btn btn-primary mx-auto text-align-left"
-                  data-bs-toggle="modal"
-                  data-bs-target="#update-group-modal"
-                >
-                  Edit
-                </button>
-
+            <div className="d-flex justify-content-between align-items-center mb-4">
+              <h5>All Chats</h5>
+              <button
+                className="btn btn-primary"
+                onClick={openNewGroupModal}
+                data-bs-toggle="modal"
+                data-bs-target="#new-group-modal"
+              >
+                + New Group
+              </button>
+            </div>
+  
+            {groups.map((group, index) => (
+              <div className="d-flex justify-content-between align-items-center mb-3" key={index}>
+                <p className="mb-0">{group.name}</p>
+                <div className="d-flex">
+                  <button
+                    onClick={() => setUpdate(group)}
+                    type="button"
+                    className="btn btn-sm btn-outline-secondary me-2"
+                    data-bs-toggle="modal"
+                    data-bs-target="#update-group-modal"
+                    
+                  >
+                    Edit
+                  </button>
+  
+                  <button
+                    onClick={() => setDeleteGroup(group)}
+                    type="button"
+                    className="btn btn-sm btn-outline-danger"
+                    data-bs-toggle="modal"
+                    data-bs-target="#deleteConfirmationModal"
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
             ))}
           </div>
-
-
         )}
       </div>
+  
       {/* New Group Modal */}
-      <div className="modal fade" id="new-group-modal" tabIndex="-1" aria-labelledby="newGroupModalLabel" aria-hidden="true" data-bs-backdrop="static">
+      <div
+        className="modal fade"
+        id="new-group-modal"
+        tabIndex="-1"
+        aria-labelledby="newGroupModalLabel"
+        aria-hidden="true"
+        data-bs-backdrop="static"
+      >
         <div className="modal-dialog modal-dialog-centered modal-md">
           <div className="modal-content">
             <div className="modal-header border-0">
               <h4 className="modal-title">Create New Group</h4>
-              <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
             </div>
             <div className="modal-body">
-              <div className="row">
-                <div className="col-12">
-                  <input
-                    type="text"
-                    className="form-control mb-3"
-                    placeholder="Enter group name"
-                    value={newGroupName}
-                    onChange={(e) => setNewGroupName(e.target.value)}
-                    required
+              <input
+                type="text"
+                className="form-control mb-3"
+                placeholder="Enter group name"
+                value={newGroupName}
+                onChange={(e) => setNewGroupName(e.target.value)}
+                required
+              />
+              <input
+                type="file"
+                className="form-control"
+                accept="image/*"
+                onChange={handleFileChange}
+              />
+              {cropImgSrc && (
+                <div className="mt-3">
+                  <img
+                    src={URL.createObjectURL(cropImgSrc)}
+                    alt="Cropped Preview"
+                    className="img-thumbnail"
                   />
+                  <button className="btn btn-danger mt-2" onClick={resetUpload}>
+                    Remove Image
+                  </button>
                 </div>
-                <div className="col-12">
-                  <input
-                    type="file"
-                    className="form-control"
-                    accept="image/*"
-                    onChange={handleFileChange}
-                  />
-                </div>
-                {cropImgSrc && (
-                  <div className="col-12 mt-3">
-                    <img
-                      src={URL.createObjectURL(cropImgSrc)}
-                      alt="Cropped Preview"
-                      className="img-thumbnail"
-                    />
-                    <button className="btn btn-danger mt-2" onClick={resetUpload}>
-                      Remove Image
-                    </button>
-                  </div>
-                )}
-              </div>
+              )}
             </div>
             <div className="modal-footer border-0">
               <button
@@ -403,106 +449,78 @@ export const ChatBoxTemplate = ({
                 disabled={inProgress || !newGroupName.trim()}
                 onClick={createNewGroup}
               >
-                {inProgress ? 'Creating...' : 'Create Group'}
+                {inProgress ? "Creating..." : "Create Group"}
               </button>
             </div>
           </div>
         </div>
       </div>
-      {/* Update Group Modal */}
-      <div className="modal fade" id="update-group-modal" tabIndex="-1" aria-labelledby="newGroupModalLabel" aria-hidden="true" data-bs-backdrop="static">
+  
+      {/* Edit Group Modal */}
+      <div
+        className="modal fade"
+        id="update-group-modal"
+        tabIndex="-1"
+        aria-labelledby="updateGroupModalLabel"
+        aria-hidden="true"
+        data-bs-backdrop="static"
+      >
         <div className="modal-dialog modal-dialog-centered modal-md">
           <div className="modal-content">
             <div className="modal-header border-0">
-              <h4 className="modal-title">Create New Group</h4>
-              <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              <h4 className="modal-title">Edit Group</h4>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
             </div>
             <div className="modal-body">
-              <div className="row">
-                <div className="col-12">
-                  <input
-                    type="text"
-                    className="form-control mb-3"
-                    placeholder="Enter group name"
-                    value={changeGroupName}
-                    onChange={(e) => set(e.target.value)}
-                    required
+              <input
+                type="text"
+                className="form-control mb-3"
+                placeholder="Enter group name"
+                value={changeGroupName}
+                onChange={(e) => setChangeGroupName(e.target.value)}
+                required
+              />
+              <input
+                type="file"
+                className="form-control"
+                accept="image/*"
+                onChange={handleFileChange}
+              />
+              {cropImgSrc && (
+                <div className="mt-3">
+                  <img
+                    src={URL.createObjectURL(cropImgSrc)}
+                    alt="Cropped Preview"
+                    className="img-thumbnail"
                   />
+                  <button className="btn btn-danger mt-2" onClick={resetUpload}>
+                    Remove Image
+                  </button>
                 </div>
-                <div className="col-12">
-                  <input
-                    type="file"
-                    className="form-control"
-                    accept="image/*"
-                    onChange={handleFileChange}
-                  />
-                </div>
-                {cropImgSrc && (
-                  <div className="col-12 mt-3">
-                    <img
-                      src={URL.createObjectURL(cropImgSrc)}
-                      alt="Cropped Preview"
-                      className="img-thumbnail"
-                    />
-                    <button className="btn btn-danger mt-2" onClick={resetUpload}>
-                      Remove Image
-                    </button>
-                  </div>
-                )}
-              </div>
+              )}
             </div>
             <div className="modal-footer border-0">
               <button
                 type="button"
                 className="btn btn-primary w-100"
-                disabled={inProgress || !newGroupName.trim()}
+                disabled={!changeGroupName.trim()}
                 onClick={updateGroupName}
               >
-                {inProgress ? 'Creating...' : 'Create Group'}
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-      {/* New Personal Chat Modal */}
-      <div className="modal fade" id="personalChatModel" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
-        <div className="modal-dialog modal-dialog-centered modal-md">
-          <div className="modal-content">
-            <div className="modal-header border-0">
-              <h4 className="modal-title">Invite Contact</h4>
-              <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div className="modal-body">
-              <div className="row">
-                <div className="col-12">
-                  <input
-                    type="email"
-                    className={`form-control ${fieldError ? 'is-invalid' : ''}`}
-                    placeholder="Enter email"
-                    value={email}
-                    onChange={handleEmailChange}
-                    required
-                  />
-                  {fieldError && <div className="invalid-feedback">{fieldError}</div>}
-                </div>
-              </div>
-            </div>
-            <div className="modal-footer border-0">
-              <button
-                type="button"
-                className="btn btn-primary w-100"
-                disabled={!email || fieldError}
-                onClick={inviteContact}
-              >
-                Invite
+                {inProgress ? "Updating..." : "Update Group"}
               </button>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Delete Confirmation Modal */}
-      {/* <div className="modal fade" id="deleteConfirmationModal" tabIndex="-1" data-bs-backdrop="static">
+
+       {/* Delete Confirmation Modal */}
+        <div className="modal fade" id="deleteConfirmationModal" tabIndex="-1" data-bs-backdrop="static">
         <div className="modal-dialog modal-dialog-centered modal-sm">
           <div className="modal-content">
             <div className="modal-header border-0">
@@ -529,7 +547,7 @@ export const ChatBoxTemplate = ({
                   type="button"
                   className="btn btn-primary w-100 me-2"
                   data-bs-dismiss="modal"
-                  onClick={handleAction}
+                  onClick={deleteGroup}
                 >
                   Yes
                 </button>
@@ -540,9 +558,62 @@ export const ChatBoxTemplate = ({
             </div>
           </div>
         </div>
-      </div> */}
+      </div>
+    
 
-    </>
+      
+  
+      {/* Personal Chat Modal */}
+      <div
+        className="modal fade"
+        id="personalChatModel"
+        tabIndex="-1"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+        data-bs-backdrop="static"
+      >
+        <div className="modal-dialog modal-dialog-centered modal-md">
+          <div className="modal-content">
+            <div className="modal-header border-0">
+              <h4 className="modal-title">Invite Contact</h4>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div className="modal-body">
+              <input
+                type="email"
+                className={`form-control ${fieldError ? "is-invalid" : ""}`}
+                placeholder="Enter email"
+                value={email}
+                onChange={handleInviteChange}
+                required
+              />
+              {fieldError && (
+                <div className="invalid-feedback">{fieldError}</div>
+              )}
+            </div>
+            <div className="modal-footer border-0">
+              <button
+                type="button"
+                className="btn btn-primary w-100"
+                disabled={!email || fieldError}
+                onClick={handleInviteSubmit}
+              >
+                Invite
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+
+  </>
+  
 
   );
 };

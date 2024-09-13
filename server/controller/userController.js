@@ -34,9 +34,11 @@ module.exports.login = async (req, res) => {
 
 module.exports.googleLogin = async (req, res) => {
     const { user } = req.body.data;
+    console.log("🚀 ~ module.exports.googleLogin= ~ user:", user)
 
     try {
         const data = await userDao.findUserGoogle({ user });
+        console.log("🚀 ~ module.exports.googleLogin= ~ data:", data)
 
         if (!data) {
             return res.status(404).json({ error: 'User not found' });

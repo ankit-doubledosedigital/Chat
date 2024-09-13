@@ -42,3 +42,20 @@ module.exports.fetchGroups = async (req, res) => {
         res.status(500).json({ error: 'Error deleting group' });
     }
 };
+
+module.exports.updateGroup = async (req, res) => {
+    try {
+        const groups = await groupDao.updateGroup(req.body);
+        console.log("🚀 ~ module.exports.updateGroup= ~ req.query):", req.body)
+
+        // Log for debugging purposes
+
+        // Respond with a success message and updated groups list
+        res.status(200).json({ message: 'Group updated successfully', groups });
+    } catch (error) {
+        console.error("Error in deleteGroup:", error); // Log the error for debugging
+
+        // Send a response with a 500 status code for any errors
+        res.status(500).json({ error: 'Error update group' });
+    }
+};

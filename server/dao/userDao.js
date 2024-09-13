@@ -45,36 +45,38 @@ module.exports.findUser = async (userData) => {
 module.exports.findUserGoogle = async (userData) => {
   try {
     const { user } = userData;
+    console.log("🚀 ~ module.exports.findUserGoogle= ~ user:", user.picture);
 
     // Log the sub value being searched
+    console.log("Searching for user with sub:", user.sub);
 
-    // Find the user by the 'sub' value
-    let uid = await model.User.findOne({ uid: user.sub });
-    
+    // Find the user by the 'sub' value (unique Google identifier)
+    let existingUser = await model.User.findOne({ uid: user.sub });
 
-    if (!uid) {
+    if (!existingUser) {
       // User not found, create a new user
-      uid = new User({
+      const newUser = new model.User({
         uid: user.sub,
         email: user.email,  // Assuming email is part of user object
-        username: user.name,    // Assuming name is part of user object
+        username: user.name, // Assuming name is part of user object
+        photoUrl: user.picture,
         // Add other fields as necessary
       });
 
       // Save the new user
-      await uid.save();
+      await newUser.save();
+      return newUser;
     } else {
-      // Update last login if necessary
-      uid.lastLogin = new Date();
-      await uid.save();
+      // User found, update the last login
+      existingUser.lastLogin = new Date();
+      await existingUser.save();
+      return existingUser;
     }
-
-    // Return the user
-    return uid;
   } catch (error) {
     console.error("Error in findUserGoogle:", error);
     throw new Error('Error finding or saving user');
   }
 };
+
 
 

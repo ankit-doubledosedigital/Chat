@@ -53,7 +53,7 @@ const Dashboard = () => {
                         <div className="card flex justify-content-center">
                             <Toast ref={toast}></Toast>
                             <Menu model={items} popup ref={menuRight} id="popup_menu_right" popupAlignment="right" />
-                            <Button label="DashBoard" icon=" pi pi-home " className=" btn btn-primary mr-2 text-white text-decoration-none" onClick={(event) => menuRight.current.toggle(event)} aria-controls="popup_menu_right" aria-haspopup />
+                            <Button label="DashBoard" icon=" pi pi-home " className=" btn btn-primary mr-2 ps-2 text-white text-decoration-none" onClick={(event) => menuRight.current.toggle(event)} aria-controls="popup_menu_right" aria-haspopup />
                         </div>
                     </div>
                 </div>
