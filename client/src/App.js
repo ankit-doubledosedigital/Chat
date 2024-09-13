@@ -15,6 +15,7 @@ import TermsAndConditions from './components/Policy/Term-Condition.jsx';
 import Chat from './components/Chat/chat.js';
 import Profile from './components/Profile.jsx';
 import Overview from './components/overview.jsx';
+import AboutPage from './components/About.jsx';
 
 // Toasty
 import { ToastContainer } from 'react-toastify';
@@ -38,6 +39,8 @@ const Main = () => {
         <Route path="/chat" element={<Chat />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/overview" element={<Overview />} />
+        <Route path="/about" element={<AboutPage />} />
+
       </Routes>
       <Footer />
     </div>

@@ -22,6 +22,8 @@
         app.use('/api', userRoutes);
         app.use('/chat', require('./Routes/chat') );
 
+        app.use('/invite', require('./Routes/inviteRoute'));
+
     
 
       

@@ -35,6 +35,9 @@ const Login = () => {
         localStorage.setItem('name', response.data.user.username);
         localStorage.setItem('email', response.data.user.email);
         localStorage.setItem('userId', response.data.user._id);
+        // localStorage.setItem('picture', response.data.user.picture);
+
+
         navigate('/chat'); // Navigate to the desired page on successful login
       } else {
         toast.error(response.data.message);
@@ -59,6 +62,10 @@ const Login = () => {
       localStorage.setItem('name', response.data.data.username);
       localStorage.setItem('email', response.data.data.email);
       localStorage.setItem('userId', response.data.data._id);
+      localStorage.setItem('pictures', response.data.data.photoUrl);
+      
+        console.log("🚀 ~ signInWithGoogle ~ response.data.data:", response.data.data)
+
 
       navigate('/chat'); // Navigate to the desired page on successful login
     } else {

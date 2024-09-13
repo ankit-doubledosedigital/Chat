@@ -10,6 +10,8 @@ const Profile = () => {
   const name = localStorage.getItem('name');
   const email = localStorage.getItem('email');
   const userId = localStorage.getItem('userId');
+  const photoUrl=localStorage.getItem('pictures');
+
 
   const clearCacheLogout = () => {
     // Clear local storage
@@ -23,6 +25,7 @@ const Profile = () => {
     // Fetch user data
     axios.get('http://localhost:8080/login/getData', {
       params: { userId }
+      
     })
     // .then(response => {
     //   setRewards(response.data.user.rewards);
@@ -38,6 +41,8 @@ const Profile = () => {
       <div className="dashboard">
         <h2>User Profile</h2>
         {/* <img src={user} alt="user" /> */}
+        <img src={photoUrl} alt="Google profile picture" />
+
         <table className="dashboard-table">
           <thead>
             <tr>

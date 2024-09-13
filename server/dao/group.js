@@ -28,8 +28,13 @@ module.exports.createGroupChat = async (options) => {
   // fetch 
 
   module.exports.fetchGroups = async (options) => {
+    console.log("🚀 ~ module.exports.fetchGroups= ~ options:", options)
     try {
-      return await model.chatRoom.find({uid:options.uid})
+       const data= await model.chatRoom.find({uid:options.uid})
+       console.log("🚀 ~ module.exports.fetchGroups= ~ data:", data)
+       
+       return data;
+
     } catch (error) {
       console.error('Error creating Group:', error);
       throw new Error('Error creating Group');
@@ -41,7 +46,7 @@ module.exports.createGroupChat = async (options) => {
 
   module.exports.deleteGroup = async (options) => {
     try {
-      return await model.chatRoom.deleteOne({uid:options.uid})
+      return await model.chatRoom.deleteOne({_id:options._id})
       
     } 
     
@@ -51,5 +56,17 @@ module.exports.createGroupChat = async (options) => {
       throw new Error('Error creating Group');
     }
   };
+
+  // update group
+  module.exports.updateGroup = async (options) => {
+    try {
+      return await model.chatRoom.updateOne({ _id: options._id },{$set:{name:options.name}});
+    } catch (error) {
+      console.error('Error updating Group:', error);
+      throw new Error('Error updating Group');
+    }
+  };
+  
+
 
 
