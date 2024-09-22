@@ -5,7 +5,6 @@ let collectionSchema = new mongoose.Schema(
         uid: { type: String, ref: 'user' },
         groupId: { type: mongoose.Schema.Types.ObjectId, ref: 'chatRoom' },
         message: { type: String },
-        isBot: { type: Boolean },
         isEdited: { type: Boolean, default:false },
         isDeleted:{ type: Boolean, default:false }, 
         isUploaded: {type:Boolean},

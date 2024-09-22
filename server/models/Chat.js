@@ -30,6 +30,8 @@ let collectionSchema = new mongoose.Schema(
             }
         ],
         invitationCode: { type: String },
+        
+
         isMute: [{ type: String }],
     }], { timestamps: true }
 )

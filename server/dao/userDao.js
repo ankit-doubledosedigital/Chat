@@ -45,12 +45,7 @@ module.exports.findUser = async (userData) => {
 module.exports.findUserGoogle = async (userData) => {
   try {
     const { user } = userData;
-    console.log("🚀 ~ module.exports.findUserGoogle= ~ user:", user.picture);
 
-    // Log the sub value being searched
-    console.log("Searching for user with sub:", user.sub);
-
-    // Find the user by the 'sub' value (unique Google identifier)
     let existingUser = await model.User.findOne({ uid: user.sub });
 
     if (!existingUser) {

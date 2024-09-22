@@ -2,10 +2,12 @@ const InviteDAO = require('../dao/inviteDAO');
 
 class InviteController {
   static async sendInvite(req, res) {
-    const { invitationCode} = req.body;
+    const { email,name,link} = req.body;
+    
 
+    
     try {
-      await InviteDAO.createInvite(invitationCode);
+      await InviteDAO.createInvite(email,name,link);
       res.status(200).send('Invite sent and saved successfully');
     } catch (error) {
       console.error('Error sending invite:', error);
