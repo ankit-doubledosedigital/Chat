@@ -16,6 +16,8 @@ import Chat from './components/Chat/chat.js';
 import Profile from './components/Profile.jsx';
 import Overview from './components/overview.jsx';
 import AboutPage from './components/About.jsx';
+import Invite from './components/autheniticate/invite.jsx';
+import NotFound from './components/layout/404.js';
 
 // Toasty
 import { ToastContainer } from 'react-toastify';
@@ -23,13 +25,14 @@ import { ToastContainer } from 'react-toastify';
 // Main Component
 const Main = () => {
   const location = useLocation();
-  const hideNavbar = location.pathname === '/chat' || location.pathname === '/overview' || location.pathname=== '/profile';
+  
+  // Determine if the navbar should be hidden
+  const hideNavbar = ['/chat', '/overview', '/profile'].includes(location.pathname) || location.pathname === '/404';
 
   return (
     <div>
       {!hideNavbar && <Navbar />}
       <ToastContainer />
-
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -40,7 +43,8 @@ const Main = () => {
         <Route path="/profile" element={<Profile />} />
         <Route path="/overview" element={<Overview />} />
         <Route path="/about" element={<AboutPage />} />
-
+        <Route path="/invite" element={<Invite />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />
     </div>

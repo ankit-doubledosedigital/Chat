@@ -2,18 +2,15 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:5000';
 
-const sendInvite = async (invitationCode, email) => {
+const sendInvite = async (link, email,name) => {
   try {
-    const inviteToken = generateInviteToken(); // Generate a unique token for the invite
-    console.log("🚀 ~ sendInvite ~ inviteToken:", inviteToken);
     
     const response = await axios.post(`${API_URL}/invite/send-invite`, {
-      inviteToken,
-      invitationCode,
-      email // Include email in the payload
+      link,
+      email, // Include email in the payload
+      name
     });
 
-    console.log("🚀 ~ sendInvite ~ response:", response);
     return response.data;
   } catch (error) {
     console.error('Error sending invite:', error);

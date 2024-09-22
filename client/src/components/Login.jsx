@@ -64,7 +64,6 @@ const Login = () => {
       localStorage.setItem('userId', response.data.data._id);
       localStorage.setItem('pictures', response.data.data.photoUrl);
       
-        console.log("🚀 ~ signInWithGoogle ~ response.data.data:", response.data.data)
 
 
       navigate('/chat'); // Navigate to the desired page on successful login
